@@ -97,7 +97,6 @@ function getAllBooksHandler() {
 function updateBookHandler(request, h) {
   const { id } = request.params;
   const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
-  const book = allBooks.filter((b) => b.id === id)[0];
   const finished = pageCount === readPage;
   const updatedAt = new Date().toISOString();
   const index = allBooks.findIndex((book) => book.id === id);
@@ -106,7 +105,7 @@ function updateBookHandler(request, h) {
     const response = h.response({
 
       status: "fail",
-      message: "Gagal menambahkan buku. Mohon isi nama buku"
+      message: "Gagal memperbarui buku. Mohon isi nama buku"
     })
     response.code(400);
     return response;
@@ -115,17 +114,16 @@ function updateBookHandler(request, h) {
   if(readPage > pageCount) {
     const response = h.response({
         "status": "fail",
-        "message": "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount"
+        "message": "Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount"
     })
     response.code(400);
     return response;
   }
 
   if (index !== -1){
-    book[index] = {
-        ...book[index],
-      id, name, year, author, summary, publisher, pageCount, readPage,
-      finished, reading, updatedAt
+    allBooks[index] = {
+        ...allBooks[index],name, year, author, summary, publisher, pageCount, readPage,
+        finished, reading, updatedAt
     }
     const response = h.response({
         status: 'success',
