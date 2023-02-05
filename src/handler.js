@@ -69,26 +69,46 @@ function getBookByIdHandler(request, h) {
     response.code(404)
     return response
   }
-  return {
-    status: "success",
-    data: {
+  const response = h.response({
+    "status": "success",
+    "data": {
       book
     }
-  }
+  })
+  response.code(200)
+  return response
 }
 
-function getAllBooksHandler() {
-  const books = [];
-  allBooks.forEach(e => {
+function getAllBooksHandler(request, h) {
+  const name = request.query.name;
+  const reading = request.query.reading;
+  const finished = request.query.finished;
+  var books = [];
+  var filteredBooks = allBooks;
+
+  if (name !== undefined) {
+    filteredBooks = allBooks.filter((b) => b.name.toLowerCase().includes(name.toLowerCase()));
+  }
+
+  if (finished !== undefined) {
+    filteredBooks = allBooks.filter((b) => b.finished == finished);
+  }
+
+  if (reading !== undefined) {
+    filteredBooks = allBooks.filter((b) => b.reading == reading);
+  }
+
+  filteredBooks.forEach(e => {
     books.push({
       "id": e.id,
       "name": e.name,
       "publisher": e.publisher
     })
   });
+
   return {
-    status: 'success',
-    data: {
+    "status": 'success',
+    "data": {
       books
     }
   }
@@ -104,8 +124,8 @@ function updateBookHandler(request, h) {
   if(name === undefined){
     const response = h.response({
 
-      status: "fail",
-      message: "Gagal memperbarui buku. Mohon isi nama buku"
+      "status": "fail",
+      "message": "Gagal memperbarui buku. Mohon isi nama buku"
     })
     response.code(400);
     return response;
@@ -126,8 +146,8 @@ function updateBookHandler(request, h) {
         finished, reading, updatedAt
     }
     const response = h.response({
-        status: 'success',
-        message: 'Buku berhasil diperbarui',
+        "status": 'success',
+        "message": 'Buku berhasil diperbarui',
     });
     response.code(200);
     return response;
